@@ -36,22 +36,20 @@ function getTotal() {
   }
 }
 
-//#Create product
+//#Create function product
 
 //js is reading the code from top to bottom so if you reload the the page localStorage will read this empty array and lost the old data
 //so you need to fix that with the if statment.
 
 let dataProduct;
 
-//ensuring if the localStorage have data so if != null 
-if(localStorage.product != null) {
-    //get the data back as an array
-    dataProduct = JSON.parse(localStorage.product)
-} els {
-    
+//ensuring if the localStorage have data so if != null
+if (localStorage.product != null) {
+  //get the data back as an array
+  dataProduct = JSON.parse(localStorage.product);
+} else {
+  dataProduct = [];
 }
-
-
 
 submit.onclick = function () {
   // to avoid the missing data we should gather the data withen an object
@@ -73,5 +71,19 @@ submit.onclick = function () {
 
   localStorage.setItem("product", JSON.stringify(dataProduct));
 
-  console.log(newProduct);
+  clearData();
 };
+
+//# Clear inputs
+
+function clearData() {
+  title.value = "";
+  price.value = "";
+  taxes.value = "";
+  ads.value = "";
+  discount.value = "";
+  title.value = "";
+  total.innerHTML = "";
+  count.value = "";
+  category.value = "";
+}
