@@ -38,8 +38,20 @@ function getTotal() {
 
 //#Create product
 
-//best place to save data is in array
-let dataProduct = [];
+//js is reading the code from top to bottom so if you reload the the page localStorage will read this empty array and lost the old data
+//so you need to fix that with the if statment.
+
+let dataProduct;
+
+//ensuring if the localStorage have data so if != null 
+if(localStorage.product != null) {
+    //get the data back as an array
+    dataProduct = JSON.parse(localStorage.product)
+} els {
+    
+}
+
+
 
 submit.onclick = function () {
   // to avoid the missing data we should gather the data withen an object
