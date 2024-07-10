@@ -14,14 +14,16 @@ let submit = document.getElementById("submit");
 // console.log(title, price, taxes, total, count, category, submit);
 
 //----------------
+//#Project instructions
 
 // 1.  Get Total Function, and Create product
 // 2.  Save in the local storage, and clear input
 // 3.  read input
-// 4.  count
-// 5.  update
-// 6.  search
-// 7.  clean data
+// 4.  delete, delete all
+// 5.  count
+// 6.  update
+// 7.  search
+// 8.  clean data
 
 //#Get Total Function
 
@@ -91,6 +93,7 @@ function clearData() {
 
 //# Read data
 
+//this function is responsible for the html elements
 function showData() {
   // note that if you have an arrey data, and if want to show them in the UI you must rernder it by a loop
 
@@ -107,12 +110,36 @@ function showData() {
             <td>${dataProduct[i].total}</td>
             <td>${dataProduct[i].category}</td>
             <td><button id="update">update</button></td>
-            <td><button id="delete">delete</button></td>
+            <td><button onclick="deleteData(${i})" id="delete">delete</button></td>
         </tr>
         `;
   }
 
   document.getElementById("tbody").innerHTML = table;
+
+  let btnDel = document.getElementById("deleteAll");
+
+  if (dataProduct.length > 0) {
+    btnDel.innerHTML = `<button onclick="deleAll()">delete all</button>`;
+  } else {
+    btnDel.innerHTML = "";
+  }
+}
+showData();
+
+//# delete one element
+
+function deleteData(i) {
+  //delete the data from the array
+  dataProduct.splice(i, 1);
+
+  //to delete the stored data repleace with a new one in the local storage
+  localStorage.product = JSON.stringify(dataProduct);
+  showData();
 }
 
-showData();
+function deleAll() {
+  localStorage.clear();
+  dataProduct.splice(0);
+  showData();
+}

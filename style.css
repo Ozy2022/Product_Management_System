@@ -66,6 +66,11 @@ button:hover {
   letter-spacing: 1px;
 }
 
+.deleteAll {
+  margin: 20px 0;
+  background-color: #a00d02;
+}
+
 .btn-search {
   display: flex;
   justify-content: space-between;
