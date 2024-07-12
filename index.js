@@ -10,26 +10,20 @@ let count = document.getElementById("count");
 let category = document.getElementById("category");
 let submit = document.getElementById("submit");
 
+let mod = "create";
+let tmp;
+
 //to test the element
 // console.log(title, price, taxes, total, count, category, submit);
 
-//----------------
-//#Project instructions
-
-// 1.  Get Total Function, and Create product
-// 2.  Save in the local storage, and clear input
-// 3.  read input
-// 4.  delete, delete all
-// 5.  count
-// 6.  update
-// 7.  search
-// 8.  clean data
-
-//#Get Total Function
-
+//# Get Total Function
 function getTotal() {
   if (price.value != "") {
-    let results = +price.value + +taxes.value + +ads.value - +discount.value;
+    let results =
+      Number(price.value) +
+      Number(taxes.value) +
+      Number(ads.value) -
+      Number(discount.value);
     total.innerHTML = results;
     total.style.background = "#040";
   } else {
@@ -38,38 +32,35 @@ function getTotal() {
   }
 }
 
-//#Create function product
-
-//js is reading the code from top to bottom so if you reload the the page localStorage will read this empty array and lost the old data
-//so you need to fix that with the if statment.
-
-let dataProduct;
-
-//ensuring if the localStorage have data so if != null
-if (localStorage.product != null) {
-  //get the data back as an array
-  dataProduct = JSON.parse(localStorage.product);
-} else {
-  dataProduct = [];
-}
+//# Create function product
+let dataProduct = localStorage.product ? JSON.parse(localStorage.product) : [];
 
 submit.onclick = function () {
-  // to avoid the missing data we should gather the data withen an object
   let newProduct = {
-    title: title.value,
+    title: title.value.toLowerCase(),
     price: price.value,
     taxes: taxes.value,
     ads: ads.value,
     discount: discount.value,
     total: total.innerHTML,
     count: count.value,
-    category: category.value,
+    category: category.value.toLowerCase(),
   };
-  //here is to keep the new products saved as an new object within an array
-  dataProduct.push(newProduct);
 
-  //here is to keep save the data after reloading the page within the local storage
-  //note that localStorage is saving only json type, so you need to change the objcet type as an strings => (the product key would save all the data)
+  if (mod === "create") {
+    if (newProduct.count > 1) {
+      for (let i = 0; i < newProduct.count; i++) {
+        dataProduct.push(newProduct);
+      }
+    } else {
+      dataProduct.push(newProduct);
+    }
+  } else {
+    dataProduct[tmp] = newProduct;
+    mod = "create";
+    submit.innerHTML = "Create";
+    count.style.display = "block";
+  }
 
   localStorage.setItem("product", JSON.stringify(dataProduct));
 
@@ -78,25 +69,20 @@ submit.onclick = function () {
 };
 
 //# Clear inputs
-
 function clearData() {
   title.value = "";
   price.value = "";
   taxes.value = "";
   ads.value = "";
   discount.value = "";
-  title.value = "";
   total.innerHTML = "";
   count.value = "";
   category.value = "";
 }
 
 //# Read data
-
-//this function is responsible for the html elements
 function showData() {
-  // note that if you have an arrey data, and if want to show them in the UI you must rernder it by a loop
-
+  getTotal();
   let table = "";
   for (let i = 0; i < dataProduct.length; i++) {
     table += `
@@ -109,31 +95,31 @@ function showData() {
             <td>${dataProduct[i].discount}</td>
             <td>${dataProduct[i].total}</td>
             <td>${dataProduct[i].category}</td>
-            <td><button id="update">update</button></td>
+            <td><button onclick="updateData(${i})" id="update">update</button></td>
             <td><button onclick="deleteData(${i})" id="delete">delete</button></td>
         </tr>
         `;
   }
 
-  document.getElementById("tbody").innerHTML = table;
-
+  let tbody = document.getElementById("tbody");
   let btnDel = document.getElementById("deleteAll");
 
-  if (dataProduct.length > 0) {
-    btnDel.innerHTML = `<button onclick="deleAll()">delete all</button>`;
-  } else {
-    btnDel.innerHTML = "";
+  if (tbody) {
+    tbody.innerHTML = table;
+  }
+  if (btnDel) {
+    if (dataProduct.length > 0) {
+      btnDel.innerHTML = `<button onclick="deleAll()">delete all (${dataProduct.length})</button>`;
+    } else {
+      btnDel.innerHTML = "";
+    }
   }
 }
 showData();
 
 //# delete one element
-
 function deleteData(i) {
-  //delete the data from the array
   dataProduct.splice(i, 1);
-
-  //to delete the stored data repleace with a new one in the local storage
   localStorage.product = JSON.stringify(dataProduct);
   showData();
 }
@@ -142,4 +128,86 @@ function deleAll() {
   localStorage.clear();
   dataProduct.splice(0);
   showData();
+}
+
+//# Update
+function updateData(i) {
+  title.value = dataProduct[i].title;
+  price.value = dataProduct[i].price;
+  taxes.value = dataProduct[i].taxes;
+  ads.value = dataProduct[i].ads;
+  discount.value = dataProduct[i].discount;
+
+  getTotal();
+  count.style.display = "none";
+  category.value = dataProduct[i].category;
+  submit.innerHTML = "Update";
+  mod = "update";
+  tmp = i;
+  scroll({
+    top: 0,
+    behavior: "smooth",
+  });
+}
+
+//# Search
+let searchMood = "title";
+
+function getSearchMood(id) {
+  let search = document.getElementById("search");
+
+  if (id === "searchTitle") {
+    searchMood = "title";
+  } else {
+    searchMood = "category";
+  }
+  search.placeholder = "Search by " + searchMood;
+  search.focus();
+  search.value = "";
+  showData();
+}
+
+//Search data
+
+function searchData(value) {
+  let table = "";
+  for (let i = 0; i < dataProduct.length; i++) {
+    if (searchMood === "title") {
+      if (dataProduct[i].title.includes(value.toLowerCase())) {
+        table += `
+          <tr>
+              <td>${i}</td>
+              <td>${dataProduct[i].title}</td>
+              <td>${dataProduct[i].price}</td>
+              <td>${dataProduct[i].taxes}</td>
+              <td>${dataProduct[i].ads}</td>
+              <td>${dataProduct[i].discount}</td>
+              <td>${dataProduct[i].total}</td>
+              <td>${dataProduct[i].category}</td>
+              <td><button onclick="updateData(${i})" id="update">update</button></td>
+              <td><button onclick="deleteData(${i})" id="delete">delete</button></td>
+          </tr>
+          `;
+      }
+    } else {
+      if (dataProduct[i].category.includes(value.toLowerCase())) {
+        table += `
+          <tr>
+              <td>${i}</td>
+              <td>${dataProduct[i].title}</td>
+              <td>${dataProduct[i].price}</td>
+              <td>${dataProduct[i].taxes}</td>
+              <td>${dataProduct[i].ads}</td>
+              <td>${dataProduct[i].discount}</td>
+              <td>${dataProduct[i].total}</td>
+              <td>${dataProduct[i].category}</td>
+              <td><button onclick="updateData(${i})" id="update">update</button></td>
+              <td><button onclick="deleteData(${i})" id="delete">delete</button></td>
+          </tr>
+          `;
+      }
+    }
+  }
+
+  document.getElementById("tbody").innerHTML = table;
 }

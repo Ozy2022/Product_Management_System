@@ -66,9 +66,8 @@ button:hover {
   letter-spacing: 1px;
 }
 
-.deleteAll {
+.delete_All {
   margin: 20px 0;
-  background-color: #a00d02;
 }
 
 .btn-search {

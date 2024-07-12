@@ -47,13 +47,22 @@
 
       <div class="outputs">
         <div class="search-block">
-          <input placeholder="search" type="text" id="search" />
+          <input
+            onkeyup="searchData(this.value)"
+            placeholder="search"
+            type="text"
+            id="search"
+          />
           <div class="btn-search">
-            <button id="searchTitle">Search By Title</button>
-            <button id="searchCategory">Search By Category</button>
+            <button onclick=" getSearchMood(this.id)" id="searchTitle">
+              Search By Title
+            </button>
+            <button onclick=" getSearchMood(this.id)" id="searchCategory">
+              Search By Category
+            </button>
           </div>
         </div>
-        <div class="deleteAll"></div>
+        <div class="delete_All" id="deleteAll"></div>
         <table>
           <tr>
             <th>id</th>
